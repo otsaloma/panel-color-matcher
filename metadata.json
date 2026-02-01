@@ -1,0 +1,8 @@
+{
+  "name": "Panel Color Matcher",
+  "description": "Changes the top panel color to match the titlebar of maximized windows",
+  "uuid": "panel-color-matcher@otsaloma.io",
+  "shell-version": ["49"],
+  "version": 0.0,
+  "url": "https://github.com/otsaloma/panel-color-matcher"
+}
