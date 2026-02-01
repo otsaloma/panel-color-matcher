@@ -1,6 +1,9 @@
 {
+  "eqeqeq": true,
   "esversion": 11,
   "expr": true,
   "node": true,
-  "shadow": true
+  "shadow": true,
+  "undef": true,
+  "unused": true
 }

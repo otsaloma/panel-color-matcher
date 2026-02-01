@@ -2,7 +2,8 @@ Panel Color Matcher GNOME Shell Extension
 =========================================
 
 Panel Color Matcher is a GNOME Shell extension to dynamically change the
-top panel background color to match the color of a maximized window.
+top panel background color to match the wallpaper or the color of a
+maximized window.
 
 ## Installing
 

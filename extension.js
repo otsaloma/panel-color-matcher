@@ -1,25 +1,32 @@
 // -*- coding: utf-8-unix -*-
+/* globals TextEncoder */
 
 import Gio from "gi://Gio";
 import GLib from "gi://GLib";
 import Shell from "gi://Shell";
 import St from "gi://St";
 
+import * as Main from "resource:///org/gnome/shell/ui/main.js";
 import {Extension} from "resource:///org/gnome/shell/extensions/extension.js";
 
 export default class PanelColorMatcher extends Extension {
 
     enable() {
+        // XXX: We need some more signal connections here. Maybe we need to
+        // iterate over windows and connect to signals of individual windows?
+        // https://mutter.gnome.org/meta/class.Display.html#signals
         this._displayIds = ["focus-window"]
             .map(signal => global.display.connect(
                 signal, () => this._update()));
 
+        // https://github.com/GNOME/gnome-shell/blob/main/js/ui/windowManager.js
         this._windowManagerIds = ["size-changed"]
             .map(signal => global.window_manager.connect(
                 signal, () => this._updateDelayed()));
 
         this._stylesheet = null;
         this._updateTimeout = null;
+        this._update();
     }
 
     disable() {
@@ -27,17 +34,16 @@ export default class PanelColorMatcher extends Extension {
         this._windowManagerIds.map(id => global.window_manager.disconnect(id));
         this._updateTimeout && GLib.source_remove(this._updateTimeout);
         this._unloadStyle();
-        this._stylesheet && this._stylesheet.delete(null);
     }
 
     async _sampleColor(x, y) {
         // XXX: global.stage.read_pixels would be more appropriate.
         // https://gitlab.gnome.org/GNOME/mutter/-/issues/3622
-        let screenshot = new Shell.Screenshot();
-        let [content, scale] = await screenshot.screenshot_stage_to_content();
-        let texture = content.get_texture();
-        let stream = Gio.MemoryOutputStream.new_resizable();
-        let pixbuf = await Shell.Screenshot.composite_to_stream(
+        const screenshot = new Shell.Screenshot();
+        const [content, scale] = await screenshot.screenshot_stage_to_content();
+        const texture = content.get_texture();
+        const stream = Gio.MemoryOutputStream.new_resizable();
+        const pixbuf = await Shell.Screenshot.composite_to_stream(
             texture,
             x * scale,
             y * scale,
@@ -50,21 +56,22 @@ export default class PanelColorMatcher extends Extension {
             1,
             stream,
         );
-        let pixels = pixbuf.get_pixels();
+        const pixels = pixbuf.get_pixels();
         return {r: pixels[0], g: pixels[1], b: pixels[2]};
     }
 
     _applyStyle(bg, fg) {
-        let css = `
-          #panel { background-color: ${bg}; }
-          #panel * { color: ${fg}; }`;
-        let theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
+        const css = [
+            // XXX: This is not yet quite enough to affect all panel widgets.
+            // https://github.com/GNOME/gnome-shell/blob/main/data/theme/gnome-shell-sass/widgets/_panel.scss
+            `#panel { background-color: ${bg}; }`,
+            `#panel * { color: ${fg}; }`,
+        ].join("\n");
+        const theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
         if (this._stylesheet) {
             theme.unload_stylesheet(this._stylesheet);
         } else {
-            let [file, stream] = Gio.File.new_tmp("panel-color-matcher-XXXXXX.css");
-            stream.close(null);
-            this._stylesheet = file;
+            this._stylesheet = Gio.File.new_for_path("/tmp/panel-color-matcher.css");
         }
         this._stylesheet.replace_contents(
             new TextEncoder().encode(css),
@@ -77,28 +84,37 @@ export default class PanelColorMatcher extends Extension {
     }
 
     _unloadStyle() {
-        let theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
+        const theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
         this._stylesheet && theme.unload_stylesheet(this._stylesheet);
     }
 
     _update() {
-        let win = global.display.focus_window;
-        if (win && (win.fullscreen ||
-                    win.maximized_horizontally ||
-                    win.maximized_vertically)) {
-            let rect = win.get_frame_rect();
-            let x = rect.x + Math.floor(rect.width / 2);
-            let y = rect.y + 3;
-            this._sampleColor(x, y).then(color => {
-                let bg = `rgb(${color.r}, ${color.g}, ${color.b})`;
-                let fg = `rgb(${255-color.r}, ${255-color.g}, ${255-color.b})`;
-                this._applyStyle(bg, fg);
-            }).catch(e => {
-                console.error("Color sampling failed:", e);
-            });
-        } else {
-            this._unloadStyle();
-        }
+        const index = global.display.get_primary_monitor();
+        const monitor = global.display.get_monitor_geometry(index);
+        // Sample at 25% and 75% to detect half-maximized windows.
+        const x1 = monitor.x + Math.floor(monitor.width * 0.25);
+        const x2 = monitor.x + Math.floor(monitor.width * 0.75);
+        const y  = monitor.y + Main.panel.height + 3;
+        Promise.all([
+            this._sampleColor(x1, y),
+            this._sampleColor(x2, y),
+        ]).then(([color1, color2]) => {
+            // In case one window is half-maximized either on the left or the
+            // right side, find the side where the color is lightest or darkest,
+            // since windows tend to be either light or dark and wallpapers
+            // between. Also, note the chosen midpoint, which controls what
+            // happens when one light window and one dark window are
+            // half-maximized. Raising that value above 128 favors dark.
+            const dist1 = Math.abs(color1.r-155) + Math.abs(color1.g-155) + Math.abs(color1.b-155);
+            const dist2 = Math.abs(color2.r-155) + Math.abs(color2.g-155) + Math.abs(color2.b-155);
+            const color = dist1 > dist2 ? color1 : color2;
+            const luminance = 0.299 * color.r + 0.587 * color.g + 0.114 * color.b;
+            const bg = `rgb(${color.r}, ${color.g}, ${color.b})`;
+            const fg = luminance > 128 ? "rgba(0, 0, 0, 0.9)" : "rgba(255, 255, 255, 0.9)";
+            this._applyStyle(bg, fg);
+        }).catch(e => {
+            console.error("Color sampling failed:", e);
+        });
     }
 
     _updateDelayed() {
