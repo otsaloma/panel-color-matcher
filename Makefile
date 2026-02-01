@@ -1,21 +1,22 @@
 # -*- coding: utf-8-unix -*-
 
 EXTENSION := panel-color-matcher@otsaloma.io
+PACK_FILE := $(EXTENSION).shell-extension.zip
 INSTALL_DIR := ~/.local/share/gnome-shell/extensions/$(EXTENSION)
 
 check:
 	jshint *.js
 
 clean:
-	rm -f $(EXTENSION).shell-extension.zip
+	rm -f $(PACK_FILE)
 
 install:
 	mkdir -p $(INSTALL_DIR)
 	cp -f extension.js $(INSTALL_DIR)
 	cp -f metadata.json $(INSTALL_DIR)
 
-pack:
-	gnome-extensions pack --force
+pack: clean
+	gnome-extensions pack
 
 run:
 	dbus-run-session gnome-shell --devkit --wayland
