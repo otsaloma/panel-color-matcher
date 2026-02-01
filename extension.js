@@ -30,10 +30,23 @@ export default class PanelColorMatcher extends Extension {
     }
 
     disable() {
-        this._displayIds.map(id => global.display.disconnect(id));
-        this._windowManagerIds.map(id => global.window_manager.disconnect(id));
-        this._updateTimeout && GLib.source_remove(this._updateTimeout);
-        this._unloadStyle();
+        if (this._displayIds) {
+            this._displayIds.map(id => global.display.disconnect(id));
+            this._displayIds = null;
+        }
+        if (this._windowManagerIds) {
+            this._windowManagerIds.map(id => global.window_manager.disconnect(id));
+            this._windowManagerIds = null;
+        }
+        if (this._updateTimeout) {
+            GLib.source_remove(this._updateTimeout);
+            this._updateTimeout = null;
+        }
+        if (this._stylesheet) {
+            this._unloadStyle();
+            this._stylesheet.delete();
+            this._stylesheet = null;
+        }
     }
 
     async _sampleColor(x, y) {
