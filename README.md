@@ -14,3 +14,18 @@ make install
 ```
 
 Activate in the GNOME Extensions app or <https://extensions.gnome.org/>.
+
+## Screenshots
+
+Color from wallpaper:
+![screenshot](screenshots/screenshot-desktop.png)
+
+Light window maximized:
+![screenshot](screenshots/screenshot-light.png)
+
+Dark window maximized:
+![screenshot](screenshots/screenshot-dark.png)
+
+Any color window maximized:
+![screenshot](screenshots/screenshot-gimp.png)
+![screenshot](screenshots/screenshot-brave.png)
