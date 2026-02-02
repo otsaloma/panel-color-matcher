@@ -15,7 +15,7 @@ install:
 	cp -f extension.js $(INSTALL_DIR)
 	cp -f metadata.json $(INSTALL_DIR)
 
-pack: clean
+pack: check clean
 	gnome-extensions pack
 
 run:
