@@ -84,7 +84,7 @@ export default class PanelColorMatcher extends Extension {
         if (this._stylesheet) {
             theme.unload_stylesheet(this._stylesheet);
         } else {
-            this._stylesheet = Gio.File.new_for_path("/tmp/panel-color-matcher.css");
+            this._stylesheet = Gio.File.new_for_path(`/tmp/${this.uuid}.css`);
         }
         this._stylesheet.replace_contents(
             new TextEncoder().encode(css),
