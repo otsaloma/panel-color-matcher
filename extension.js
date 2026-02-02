@@ -44,7 +44,7 @@ export default class PanelColorMatcher extends Extension {
         }
         if (this._stylesheet) {
             this._unloadStyle();
-            this._stylesheet.delete();
+            this._stylesheet.delete(null);
             this._stylesheet = null;
         }
     }
