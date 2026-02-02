@@ -13,7 +13,7 @@ Install to home directory.
 make install
 ```
 
-Activate in the GNOME Extensions app or <https://extensions.gnome.org/>.
+Activate in the GNOME Extensions app.
 
 ## Known Issues
 
