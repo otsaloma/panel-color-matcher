@@ -14,6 +14,7 @@ export default class PanelColorMatcher extends Extension {
     enable() {
         // XXX: We need some more signal connections here. Maybe we need to
         // iterate over windows and connect to signals of individual windows?
+
         // https://mutter.gnome.org/meta/class.Display.html#signals
         this._displayIds = ["focus-window"]
             .map(signal => global.display.connect(
