@@ -8,7 +8,7 @@ top panel color to match the wallpaper or a maximized window.
 
 ## Installing
 
-Panel Color Matcher is available at extensions.gnome.org:
+Panel Color Matcher is available at ego:
 https://extensions.gnome.org/extension/9260/panel-color-matcher/
 
 ### Developers
