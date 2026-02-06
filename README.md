@@ -1,12 +1,19 @@
 Panel Color Matcher GNOME Shell Extension
 =========================================
 
+[![Downloads](https://img.shields.io/gnome-extensions/dt/panel-color-matcher@otsaloma.io)](https://extensions.gnome.org/extension/9260/panel-color-matcher/)
+
 Panel Color Matcher is a GNOME Shell extension to dynamically change the
 top panel color to match the wallpaper or a maximized window.
 
 ## Installing
 
-Install to home directory.
+Panel Color Matcher is available at extensions.gnome.org:
+https://extensions.gnome.org/extension/9260/panel-color-matcher/
+
+### Developers
+
+To install from the source repository during development, run
 
 ```bash
 make install
@@ -21,7 +28,8 @@ colors right below the panel. This seems to be the only approach that
 currently works, but has some problems.
 
 * Dash to Dock seems to "tremble" when the color sampling is done, which
-  is when the focus window changes or a window is resized.
+  is when the focus window changes or a window is resized. See
+  micheleg/dash-to-dock#2383
 
 * The color sampling uses more CPU than we'd like. It shouldn't be an
   issue on any modern multi-core system, but if you have a very
