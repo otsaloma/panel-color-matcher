@@ -16,14 +16,14 @@ export default class PanelColorMatcher extends Extension {
         // iterate over windows and connect to signals of individual windows?
 
         // https://mutter.gnome.org/meta/class.Display.html#signals
-        this._displayIds = ["focus-window"]
-            .map(signal => global.display.connect(
-                signal, () => this._update()));
+        global.display.connectObject(
+            "focus-window", () => this._update(),
+            this);
 
         // https://github.com/GNOME/gnome-shell/blob/main/js/ui/windowManager.js
-        this._windowManagerIds = ["size-changed"]
-            .map(signal => global.window_manager.connect(
-                signal, () => this._updateDelayed()));
+        global.window_manager.connectObject(
+            "size-changed", () => this._updateDelayed(),
+            this);
 
         this._stylesheet = null;
         this._updateTimeout = null;
@@ -31,14 +31,8 @@ export default class PanelColorMatcher extends Extension {
     }
 
     disable() {
-        if (this._displayIds) {
-            this._displayIds.map(id => global.display.disconnect(id));
-            this._displayIds = null;
-        }
-        if (this._windowManagerIds) {
-            this._windowManagerIds.map(id => global.window_manager.disconnect(id));
-            this._windowManagerIds = null;
-        }
+        global.display.disconnectObject(this);
+        global.window_manager.disconnectObject(this);
         if (this._updateTimeout) {
             GLib.source_remove(this._updateTimeout);
             this._updateTimeout = null;
