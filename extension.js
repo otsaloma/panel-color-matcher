@@ -26,6 +26,7 @@ export default class PanelColorMatcher extends Extension {
             this);
 
         this._stylesheet = null;
+        this._stylesheetText = null;
         this._updateTimeout = null;
         this._update();
     }
@@ -41,6 +42,7 @@ export default class PanelColorMatcher extends Extension {
             this._unloadStyle();
             this._stylesheet.delete(null);
             this._stylesheet = null;
+            this._stylesheetText = null;
         }
     }
 
@@ -69,12 +71,13 @@ export default class PanelColorMatcher extends Extension {
     }
 
     _applyStyle(bg, fg) {
-        const css = [
+        const stylesheetText = [
             // XXX: This is not yet quite enough to affect all panel widgets.
             // https://github.com/GNOME/gnome-shell/blob/main/data/theme/gnome-shell-sass/widgets/_panel.scss
             `#panel { background-color: ${bg}; }`,
             `#panel * { color: ${fg}; }`,
         ].join("\n");
+        if (stylesheetText === this._stylesheetText) return;
         const theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
         if (this._stylesheet) {
             theme.unload_stylesheet(this._stylesheet);
@@ -82,12 +85,13 @@ export default class PanelColorMatcher extends Extension {
             this._stylesheet = Gio.File.new_for_path(`/tmp/${this.uuid}.css`);
         }
         this._stylesheet.replace_contents(
-            new TextEncoder().encode(css),
+            new TextEncoder().encode(stylesheetText),
             null,
             false,
             Gio.FileCreateFlags.NONE,
             null
         );
+        this._stylesheetText = stylesheetText;
         theme.load_stylesheet(this._stylesheet);
     }
 
