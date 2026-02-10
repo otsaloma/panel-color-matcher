@@ -1,6 +1,6 @@
 {
   "name": "Panel Color Matcher",
-  "description": "Dynamically change the top panel color to match the wallpaper or a maximized window.\n\nSee the GitHub homepage for a list of known issues!",
+  "description": "Dynamically change the top panel color to match the wallpaper or a maximized window.",
   "uuid": "panel-color-matcher@otsaloma.io",
   "shell-version": ["49"],
   "url": "https://github.com/otsaloma/panel-color-matcher",
