@@ -12,17 +12,18 @@ import {Extension} from "resource:///org/gnome/shell/extensions/extension.js";
 export default class PanelColorMatcher extends Extension {
 
     enable() {
-        // XXX: We need some more signal connections here. Maybe we need to
-        // iterate over windows and connect to signals of individual windows?
-
         // https://mutter.gnome.org/meta/class.Display.html#signals
         global.display.connectObject(
-            "focus-window", () => this._update(),
+            "focus-window", () => this._updateDelayed(),
             this);
 
         // https://github.com/GNOME/gnome-shell/blob/main/js/ui/windowManager.js
         global.window_manager.connectObject(
-            "size-changed", () => this._updateDelayed(),
+            "destroy",          () => this._updateDelayed(),
+            "minimize",         () => this._updateDelayed(),
+            "size-changed",     () => this._updateDelayed(),
+            "switch-workspace", () => this._updateDelayed(),
+            "unminimize",       () => this._updateDelayed(),
             this);
 
         this._stylesheet = null;
