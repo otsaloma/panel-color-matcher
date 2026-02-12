@@ -9,6 +9,16 @@ import St from "gi://St";
 import * as Main from "resource:///org/gnome/shell/ui/main.js";
 import {Extension} from "resource:///org/gnome/shell/extensions/extension.js";
 
+// https://github.com/GNOME/gnome-shell/blob/main/data/theme/gnome-shell-sass/widgets/_panel.scss
+const PANEL_CSS = (bg, fg) => `
+#panel { background-color: ${bg}; }
+#panel * { color: ${fg}; }
+#panel .workspace-dot { background-color: ${fg}; }
+#panel:overview { background-color: transparent; }
+#panel:overview * { color: white; }
+#panel:overview .workspace-dot { background-color: white; }
+`.trim();
+
 export default class PanelColorMatcher extends Extension {
 
     enable() {
@@ -72,12 +82,7 @@ export default class PanelColorMatcher extends Extension {
     }
 
     _applyStyle(bg, fg) {
-        const stylesheetText = [
-            // XXX: This is not yet quite enough to affect all panel widgets.
-            // https://github.com/GNOME/gnome-shell/blob/main/data/theme/gnome-shell-sass/widgets/_panel.scss
-            `#panel { background-color: ${bg}; }`,
-            `#panel * { color: ${fg}; }`,
-        ].join("\n");
+        const stylesheetText = PANEL_CSS(bg, fg);
         if (stylesheetText === this._stylesheetText) return;
         const theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
         if (this._stylesheet) {
