@@ -5,7 +5,7 @@ Panel Color Matcher is a GNOME Shell extension to dynamically change the
 top panel color to match the wallpaper or a maximized window. The main
 implementation is in file `extension.js`.
 
-## General instructions
+## General Instructions
 
 * We're targeting GNOME 49 and later
 * We're targeting Wayland only

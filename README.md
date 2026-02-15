@@ -28,9 +28,10 @@ colors right below the panel. When that color is different than before,
 CSS is generated and loaded into the theme. This works, but has some
 minor problems.
 
-* Dash to Dock seems to "tremble" when the theming update is done, which
-  is when the focus window changes or a window is resized and the color
-  has changed. See micheleg/dash-to-dock#2383
+* Dash to Dock seems to "tremble" and sometimes swap the order of
+  non-pinned open apps in the dock when the theming update is done,
+  which is when the focus window changes or a window is resized and the
+  color has changed. See micheleg/dash-to-dock#2383
 
 * The color sampling uses more CPU than we'd like. It shouldn't be an
   issue on any modern multi-core system, but if you have a very
