@@ -31,7 +31,8 @@ minor problems.
 * Dash to Dock seems to "tremble" and sometimes swap the order of
   non-pinned open apps in the dock when the theming update is done,
   which is when the focus window changes or a window is resized and the
-  color has changed. See micheleg/dash-to-dock#2383
+  color has changed. This is a bug in Dash to Dock, see
+  micheleg/dash-to-dock#2383 for a description and a fix.
 
 * The color sampling uses more CPU than we'd like. It shouldn't be an
   issue on any modern multi-core system, but if you have a very
