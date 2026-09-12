@@ -36,7 +36,7 @@ export default class PanelColorMatcher extends Extension {
             "unminimize",       () => this._updateDelayed(),
             this);
 
-        this._stylesheet = null;
+        this._stylesheet = Gio.File.new_for_path(`/tmp/${this.uuid}.css`);
         this._stylesheetText = null;
         this._updateTimeout = null;
         this._update();
@@ -49,12 +49,13 @@ export default class PanelColorMatcher extends Extension {
             GLib.source_remove(this._updateTimeout);
             this._updateTimeout = null;
         }
-        if (this._stylesheet) {
-            this._unloadStyle();
+        if (this._stylesheetText) {
+            const theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
+            theme.unload_stylesheet(this._stylesheet);
             this._stylesheet.delete(null);
-            this._stylesheet = null;
-            this._stylesheetText = null;
         }
+        this._stylesheet = null;
+        this._stylesheetText = null;
     }
 
     async _sampleColor(x, y) {
@@ -85,11 +86,7 @@ export default class PanelColorMatcher extends Extension {
         const stylesheetText = PANEL_CSS(bg, fg);
         if (stylesheetText === this._stylesheetText) return;
         const theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
-        if (this._stylesheet) {
-            theme.unload_stylesheet(this._stylesheet);
-        } else {
-            this._stylesheet = Gio.File.new_for_path(`/tmp/${this.uuid}.css`);
-        }
+        if (this._stylesheetText) theme.unload_stylesheet(this._stylesheet);
         this._stylesheet.replace_contents(
             new TextEncoder().encode(stylesheetText),
             null,
@@ -99,11 +96,6 @@ export default class PanelColorMatcher extends Extension {
         );
         this._stylesheetText = stylesheetText;
         theme.load_stylesheet(this._stylesheet);
-    }
-
-    _unloadStyle() {
-        const theme = St.ThemeContext.get_for_stage(global.stage).get_theme();
-        this._stylesheet && theme.unload_stylesheet(this._stylesheet);
     }
 
     _update() {
