@@ -115,9 +115,8 @@ export default class PanelColorMatcher extends Extension {
             // between. Also, note the chosen midpoint, which controls what
             // happens when one light window and one dark window are
             // half-maximized. Raising that value above 128 favors dark.
-            const dist1 = Math.abs(color1.r-155) + Math.abs(color1.g-155) + Math.abs(color1.b-155);
-            const dist2 = Math.abs(color2.r-155) + Math.abs(color2.g-155) + Math.abs(color2.b-155);
-            const color = dist1 > dist2 ? color1 : color2;
+            const distance = c => Math.abs(c.r-155) + Math.abs(c.g-155) + Math.abs(c.b-155);
+            const color = distance(color1) > distance(color2) ? color1 : color2;
             const luminance = 0.299 * color.r + 0.587 * color.g + 0.114 * color.b;
             const bg = `rgb(${color.r}, ${color.g}, ${color.b})`;
             const fg = luminance > 128 ? "rgba(0, 0, 0, 0.9)" : "rgba(255, 255, 255, 0.9)";
