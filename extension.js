@@ -1,5 +1,4 @@
 // -*- coding: utf-8-unix -*-
-/* globals TextEncoder */
 
 import Gio from "gi://Gio";
 import GLib from "gi://GLib";

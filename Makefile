@@ -5,7 +5,7 @@ PACK_FILE := $(EXTENSION).shell-extension.zip
 INSTALL_DIR := ~/.local/share/gnome-shell/extensions/$(EXTENSION)
 
 check:
-	jshint *.js
+	oxlint --deny-warnings *.js
 
 clean:
 	rm -f $(PACK_FILE)
