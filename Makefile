@@ -1,8 +1,8 @@
 # -*- coding: utf-8-unix -*-
 
-EXTENSION := panel-color-matcher@otsaloma.io
-PACK_FILE := $(EXTENSION).shell-extension.zip
-INSTALL_DIR := ~/.local/share/gnome-shell/extensions/$(EXTENSION)
+EXTENSION   = panel-color-matcher@otsaloma.io
+PACK_FILE   = $(EXTENSION).shell-extension.zip
+INSTALL_DIR = ~/.local/share/gnome-shell/extensions/$(EXTENSION)
 
 check:
 	oxlint --deny-warnings *.js
